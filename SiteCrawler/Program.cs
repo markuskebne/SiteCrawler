@@ -46,7 +46,7 @@ namespace SiteCrawler
             jsonWriter.SaveToJson(TestRun.ResultsFolder, TestRun);
 
             // Exit
-            Console.WriteLine("Crawl Completed");
+            Console.WriteLine("Crawl Completed!");
             Console.ReadLine(); 
         }
     }
