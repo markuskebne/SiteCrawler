@@ -8,14 +8,14 @@ namespace SiteCrawler
     public class ResultWriter
     {
         public string Path { get; set; }
-        private readonly Stream resourceStream;
+        private readonly Stream _resourceStream;
 
         public ResultWriter()
         { }
 
         public ResultWriter(Stream resourceStream)
         {
-            this.resourceStream = resourceStream;
+            this._resourceStream = resourceStream;
         }
 
         public bool SaveToExcel(string reportPath, TestRun testRun)
@@ -34,8 +34,8 @@ namespace SiteCrawler
 
             using (var fs = new FileStream(reportPath, FileMode.CreateNew))
             {
-                resourceStream.CopyTo(fs);
-                resourceStream.Dispose();
+                _resourceStream.CopyTo(fs);
+                _resourceStream.Dispose();
             }
 
             FileInfo newFile = new FileInfo(reportPath);

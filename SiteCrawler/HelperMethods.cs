@@ -5,26 +5,20 @@ namespace SiteCrawler
 {
     public static class HelperMethods
     {
-        public static Uri VerifyURL(string link, Uri baseUri = null)
+        public static Uri VerifyUrl(string link, Uri baseUri = null)
         {
-            Uri uri;
-            Uri.TryCreate(link, UriKind.RelativeOrAbsolute, out uri);
+            Uri.TryCreate(link, UriKind.RelativeOrAbsolute, out var uri);
 
-            if (uri == null)
-                return null;
             
             if (uri.IsAbsoluteUri)
-            {
                 return uri;
-            }
+            
+            if (link.StartsWith("/"))
+                Uri.TryCreate(new Uri(baseUri.GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped)), link, out uri);
+
             else
             {
-                if (link.StartsWith("/"))
-                    Uri.TryCreate(new Uri(baseUri.GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped)), link, out uri);
-                else
-                {
-                    var debug = Uri.TryCreate(baseUri, link, out uri);
-                }
+                Uri.TryCreate(baseUri, link, out uri);
             }
             return uri;
         }
@@ -36,7 +30,7 @@ namespace SiteCrawler
             // Validate file
             if (!System.IO.File.Exists(args[0]))
             {
-                Console.WriteLine($"Invalid argument. The given argument {args[0]} is not a valid file-path");
+                Console.WriteLine($@"Invalid argument. The given argument {args[0]} is not a valid file-path");
                 return null;
             }
             input = System.IO.File.ReadAllText(args[0]);
@@ -50,7 +44,7 @@ namespace SiteCrawler
                 Uri.TryCreate(startupData.BaseUri.OriginalString, UriKind.Absolute, out result);
                 if (result == null)
                 {
-                    Console.WriteLine($"Invalid argument. The given BaseUri {startupData.BaseUri.OriginalString} could not be parsed into a valid Absolute Uri. Use format http://www.google.com");
+                    Console.WriteLine($@"Invalid argument. The given BaseUri {startupData.BaseUri.OriginalString} could not be parsed into a valid Absolute Uri. Use format http://www.google.com");
                     return null;
                 }
                 startupData.BaseUri = result;        
@@ -59,7 +53,7 @@ namespace SiteCrawler
             // Validate MaximumUrlSegments
             if (startupData.MaximumUrlSegments < 2) 
             {
-                Console.WriteLine("Invalid argument. MaximumUrlSegments must be more than 1");
+                Console.WriteLine(@"Invalid argument. MaximumUrlSegments must be more than 1");
                 return null;
             }
 

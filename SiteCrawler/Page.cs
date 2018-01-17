@@ -35,7 +35,7 @@ namespace SiteCrawler
             Crawled = false;
             Uri = uri;
             Links = new List<Uri>();
-            TestRun = this.TestRun;
+            TestRun = TestRun;
             TestResult = Result.Inconclusive;
 
         }
@@ -58,7 +58,7 @@ namespace SiteCrawler
             TestRun.CrawledPages.Add(new Page(Uri, TestRun));
 
             TestRun.PagesToCrawl -= 1;
-            Console.WriteLine($"Page Crawled: {Uri} - Result: {TestResult}");
+            Console.WriteLine($@"Page Crawled: {Uri} - Result: {TestResult}");
         }
 
         public void GetContent()
@@ -82,7 +82,7 @@ namespace SiteCrawler
                     ResponseCode = response.StatusCode;
                     using (HttpContent content = response.Content)
                     {
-                        var byteArray = response.Content.ReadAsByteArrayAsync().Result;
+                        var byteArray = content.ReadAsByteArrayAsync().Result;
                         var result = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
 
                         //string result =  content.ReadAsStringAsync().Result;
@@ -120,39 +120,39 @@ namespace SiteCrawler
                 if (link.Contains('?'))
                     input = link.Split('?')[0];
 
-                Uri _uri = HelperMethods.VerifyURL(input, Uri);
-                if (_uri != null)
+                Uri uri = HelperMethods.VerifyUrl(input, Uri);
+                if (uri != null)
                 {               
-                    Links.Add(_uri);
+                    Links.Add(uri);
                         
-                    if (ShouldBeAddedToCrawlerQue(_uri))
+                    if (ShouldBeAddedToCrawlerQue(uri))
                     {
-                        TestRun.Pages.Add(new Page(_uri, TestRun, Uri));
+                        TestRun.Pages.Add(new Page(uri, TestRun, Uri));
                         TestRun.PagesToCrawl += 1;
                     }                 
                 }
             }
         }
 
-        public bool ShouldBeAddedToCrawlerQue(Uri _uri)
+        public bool ShouldBeAddedToCrawlerQue(Uri uri)
         {
-            if (TestRun.Pages.Select(page => page.Uri).Contains(_uri))
+            if (TestRun.Pages.Select(page => page.Uri).Contains(uri))
             {
                 return false;
             }
-            if (_uri.Host != TestRun.BaseUri.Host)
+            if (uri.Host != TestRun.BaseUri.Host)
             {
                 return false;
             }
 
             // check http/https
-            if (_uri.Scheme != TestRun.BaseUri.Scheme)
+            if (uri.Scheme != TestRun.BaseUri.Scheme)
             {
                 return false;
             }
 
             // Check max url segments ToDo: Make this configurable 
-            if (_uri.Segments.Length >= TestRun.MaximumUrlSegments)
+            if (uri.Segments.Length >= TestRun.MaximumUrlSegments)
             {
                 return false;
             }
@@ -166,7 +166,7 @@ namespace SiteCrawler
 
         public Result VerifyPage()
         {
-            Result result = Result.Inconclusive;
+            Result result;
 
             // Verify ResponseCode = OK
             switch (ResponseCode)

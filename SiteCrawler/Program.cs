@@ -1,52 +1,49 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 
 namespace SiteCrawler
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            TestRun TestRun = null;
-
             // Startas med ett argument som är en path till en json fil
             if (args.Length != 1)
             {
-                Console.WriteLine("Invalid argument. Please give json filepath as only argument");
+                Console.WriteLine(@"Invalid argument. Please give json filepath as only argument");
                 Console.ReadLine();
                 return;
             }
 
             // Parse data in json file
-            TestRun = HelperMethods.ValidateArgumentAndReturnTestRun(args);
-            if (TestRun == null)
+            var testRun = HelperMethods.ValidateArgumentAndReturnTestRun(args);
+            if (testRun == null)
             {
-                Console.WriteLine("Error Invalid input file");
+                Console.WriteLine(@"Error Invalid input file");
                 Console.ReadLine();
                 return;
             }
 
             // Crawl the site
-            while ((TestRun.Pages.Where(page => page.Crawled == false)).Count() > 0)
+            while ((testRun.Pages.Where(page => page.Crawled == false)).Any())
             {
-                TestRun.Pages.Where(page => page.Crawled == false).FirstOrDefault().Crawl();
+                testRun.Pages.FirstOrDefault(page => page.Crawled == false)?.Crawl();
             }
 
             // Write results to excel
             var excelWriter = new ResultWriter(typeof(Program).Assembly.GetManifestResourceStream("SiteCrawler.ResultExcelTemplate.xlsx"));
-            Directory.CreateDirectory(TestRun.ResultsFolder);
-            var excelReportPath = Path.Combine(TestRun.ResultsFolder, "CrawlerResult" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".xlsx");
-            excelWriter.SaveToExcel(excelReportPath, TestRun);
+            Directory.CreateDirectory(testRun.ResultsFolder);
+            var excelReportPath = Path.Combine(testRun.ResultsFolder, "CrawlerResult" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".xlsx");
+            excelWriter.SaveToExcel(excelReportPath, testRun);
 
             // write results to json
             //open file stream
             var jsonWriter = new ResultWriter();
-            jsonWriter.SaveToJson(TestRun.ResultsFolder, TestRun);
+            jsonWriter.SaveToJson(testRun.ResultsFolder, testRun);
 
             // Exit
-            Console.WriteLine("Crawl Completed!");
+            Console.WriteLine(@"Crawl Completed!");
             Console.ReadLine(); 
         }
     }
