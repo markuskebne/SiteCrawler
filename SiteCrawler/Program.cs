@@ -47,7 +47,7 @@ namespace SiteCrawler
 
             // Exit
             Console.WriteLine("Crawl Completed");
-            Console.ReadLine();
+            Console.ReadLine(); 
         }
     }
 }
