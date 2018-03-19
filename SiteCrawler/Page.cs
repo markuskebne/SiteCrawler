@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SiteCrawler
@@ -189,6 +190,14 @@ namespace SiteCrawler
             {
                 result = Result.Failed;
                 Comment = $"Uri-scheme differs from test-run base-url. Uri scheme is {Uri.Scheme} but should be {TestRun.BaseUri.Scheme}";
+            }
+
+            // Find double H1 tags
+            int matches = Regex.Matches(Content, "<h1").Count;
+            if (matches > 1)
+            {
+                result = Result.Failed;
+                Comment = "The page contain several H1-tags";
             }
             return result;
         }
