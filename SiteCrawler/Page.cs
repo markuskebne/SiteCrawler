@@ -19,6 +19,7 @@ namespace SiteCrawler
         public TestRun TestRun { get; set; }
         public System.Net.HttpStatusCode ResponseCode { get; set; }
         public Result TestResult { get; set; }
+        public string Comment { get; set; }
 
         public Page(Uri uri, TestRun testRun, Uri source = null)
         {
@@ -28,6 +29,7 @@ namespace SiteCrawler
             Links = new List<Uri>();
             TestRun = testRun;
             TestResult = Result.Inconclusive;
+            Comment = String.Empty;
         }
 
         public Page(Uri uri)
@@ -37,7 +39,7 @@ namespace SiteCrawler
             Links = new List<Uri>();
             TestRun = TestRun;
             TestResult = Result.Inconclusive;
-
+            Comment = String.Empty;
         }
 
         public void Crawl()
@@ -55,7 +57,7 @@ namespace SiteCrawler
 
             Crawled = true;
             
-            TestRun.CrawledPages.Add(new Page(Uri, TestRun));
+            TestRun.CrawledPages.Add(new Page(Uri, TestRun)); // todo: behövs denna?
 
             TestRun.PagesToCrawl -= 1;
             Console.WriteLine($@"Page Crawled: {Uri} - Result: {TestResult}");
@@ -161,6 +163,8 @@ namespace SiteCrawler
             
             // Exclude ignored url segments
 
+            // .png .jpg
+
             return true;
         }
 
@@ -176,7 +180,15 @@ namespace SiteCrawler
                     break;
                 default:
                     result = Result.Failed;
+                    Comment = $"Response code is not OK. Response code is {ResponseCode}";
                     break;                  
+            }
+
+            // check http/https
+            if (Uri.Scheme != TestRun.BaseUri.Scheme)
+            {
+                result = Result.Failed;
+                Comment = $"Uri-scheme differs from test-run base-url. Uri scheme is {Uri.Scheme} but should be {TestRun.BaseUri.Scheme}";
             }
             return result;
         }

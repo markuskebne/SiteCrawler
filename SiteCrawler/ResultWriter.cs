@@ -47,6 +47,7 @@ namespace SiteCrawler
                 ws.Cells[i + 5, 1].Value = testRun.Pages[i].Uri;
                 ws.Cells[i + 5, 2].Value = testRun.Pages[i].TestResult;
                 ws.Cells[i + 5, 3].Value = testRun.Pages[i].Source;
+                ws.Cells[i + 5, 4].Value = testRun.Pages[i].Comment;
                 //ws.Cells[i + 5, 4].Value = String.Join("\n ", Enumerable.Repeat(model.Results[i].GeneralError, 1).Concat(model.Results[i].Results.Select(s => s.ResultMessage)).Where(s => !string.IsNullOrWhiteSpace(s)));
                 //ws.Cells[i + 5, 5].Value = model.Results[i].Duration;
             }
