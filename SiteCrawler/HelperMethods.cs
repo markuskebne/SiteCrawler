@@ -63,7 +63,11 @@ namespace SiteCrawler
             {
                 BaseUri = startupData.BaseUri,
                 MaximumUrlSegments = startupData.MaximumUrlSegments,
-                ResultsFolder = startupData.ResultsFolder.Replace(@"\", @"\\")               
+                ResultsFolder = startupData.ResultsFolder.Replace(@"\", @"\\"),
+                EpiLoginCookieValue = startupData.EpiLoginCookieValue,
+                IgnoredUrlSegments = startupData.IgnoredUrlSegments,
+                ValidColors = startupData.ValidColors,
+                ValidIcons = startupData.ValidIcons
             };
             testRun.Pages.Add(new Page(startupData.BaseUri, testRun));
 

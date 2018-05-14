@@ -12,6 +12,13 @@ namespace SiteCrawler
         public Result Result { get; set; }
         public int MaximumUrlSegments;
         public string ResultsFolder { get; set; }
+        public string EpiLoginCookieValue { get; set; }
+
+        public List<String> InvalidColors = new List<string>();
+        public List<String> InvalidIcons = new List<string>();
+        public List<String> IgnoredUrlSegments = new List<string>();
+        public List<String> ValidColors = new List<string>();
+        public List<String> ValidIcons = new List<string>();
 
         public TestRun(Uri startpage = null)
         {

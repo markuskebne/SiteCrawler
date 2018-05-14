@@ -2,6 +2,7 @@
 using OfficeOpenXml;
 using System;
 using System.IO;
+using OfficeOpenXml.Table.PivotTable;
 
 namespace SiteCrawler
 {
@@ -44,12 +45,23 @@ namespace SiteCrawler
 
             for (int i = 0; i < testRun.Pages.Count; i++)
             {
-                ws.Cells[i + 5, 1].Value = testRun.Pages[i].Uri;
-                ws.Cells[i + 5, 2].Value = testRun.Pages[i].TestResult;
-                ws.Cells[i + 5, 3].Value = testRun.Pages[i].Source;
-                ws.Cells[i + 5, 4].Value = testRun.Pages[i].Comment;
-                //ws.Cells[i + 5, 4].Value = String.Join("\n ", Enumerable.Repeat(model.Results[i].GeneralError, 1).Concat(model.Results[i].Results.Select(s => s.ResultMessage)).Where(s => !string.IsNullOrWhiteSpace(s)));
-                //ws.Cells[i + 5, 5].Value = model.Results[i].Duration;
+                ws.Cells[i + 7, 1].Value = testRun.Pages[i].Uri;
+                ws.Cells[i + 7, 2].Value = testRun.Pages[i].TestResult;                
+                ws.Cells[i + 7, 3].Value = testRun.Pages[i].Comment;
+                ws.Cells[i + 7, 4].Value = testRun.Pages[i].ID;
+                ws.Cells[i + 7, 5].Value = testRun.Pages[i].Title;
+                ws.Cells[i + 7, 6].Value = testRun.Pages[i].Description;
+
+                foreach (var invalidColor in testRun.Pages[i].InvalidColors)
+                {
+                    ws.Cells[i + 7, 7].Value += $"{invalidColor}\n";
+                }
+
+                foreach (var invalidIcon in testRun.Pages[i].InvalidIcons)
+                {
+                    ws.Cells[i + 7, 8].Value += $"{invalidIcon}\n";
+                }
+                ws.Cells[i + 7, 10].Value = testRun.Pages[i].Source;
             }
 
             pck.Save();
