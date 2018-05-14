@@ -81,7 +81,14 @@
     <Compile Include="Result.cs" />
     <Compile Include="ResultWriter.cs" />
     <Compile Include="StartupData.cs" />
+    <Compile Include="TestResult.cs" />
     <Compile Include="TestRun.cs" />
+    <Compile Include="TestTemplates\VerifyNoInvalidColors.cs" />
+    <Compile Include="TestTemplates\VerifyNoInvalidIcons.cs" />
+    <Compile Include="TestTemplates\VerifyNoInvalidLinks.cs" />
+    <Compile Include="TestTemplates\VerifyResponseCode.cs" />
+    <Compile Include="TestTemplates\VerifySingleH1Tag.cs" />
+    <Compile Include="TestTemplates\VerifyUriScheme.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

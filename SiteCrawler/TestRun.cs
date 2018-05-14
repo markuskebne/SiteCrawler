@@ -24,7 +24,6 @@ namespace SiteCrawler
         {
             BaseUri = startpage;
             Pages = new List<Page>();
-            CrawledPages = new List<Page>();
             PagesToCrawl = 1;
             Result = Result.NotRun;
         }

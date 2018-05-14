@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using SiteCrawler.TestTemplates;
 
 namespace SiteCrawler
 {
@@ -25,8 +26,8 @@ namespace SiteCrawler
         public string ID { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public List<string> InvalidColors { get; set; }
         public List<string> InvalidIcons { get; set; }
+        public List<TestResult> TestResults { get; set; }
 
         public Page(Uri uri, TestRun testRun, Uri source = null)
         {
@@ -37,8 +38,8 @@ namespace SiteCrawler
             TestRun = testRun;
             TestResult = Result.Inconclusive;
             Comment = String.Empty;
-            InvalidColors = new List<string>();
             InvalidIcons = new List<string>();
+            TestResults = new List<TestResult>();
         }
 
         public Page(Uri uri)
@@ -49,8 +50,8 @@ namespace SiteCrawler
             TestRun = TestRun;
             TestResult = Result.Inconclusive;
             Comment = String.Empty;
-            InvalidColors = new List<string>();
             InvalidIcons = new List<string>();
+            TestResults = new List<TestResult>();
         }
 
         public void Crawl()
@@ -68,8 +69,6 @@ namespace SiteCrawler
 
             Crawled = true;
             
-            TestRun.CrawledPages.Add(new Page(Uri, TestRun)); // todo: behövs denna?
-
             TestRun.PagesToCrawl -= 1;
             Console.WriteLine($@"Page Crawled: {Uri} - Result: {TestResult}");
         }
@@ -194,97 +193,28 @@ namespace SiteCrawler
 
         public Result VerifyPage()
         {
-            Result result;
+            Result result = Result.NotRun;
 
             // Verify ResponseCode = OK
-            switch (ResponseCode)
-            {
-                case System.Net.HttpStatusCode.OK:
-                    result = Result.Passed;
-                    break;
-                default:
-                    result = Result.Failed;
-                    Comment = $"Response code is not OK. Response code is {ResponseCode}\n";
-                    break;                  
-            }
+            TestResults.Add(VerifyResponseCode.Run(ResponseCode));
 
             // check http/https
-            if (Uri.Scheme != TestRun.BaseUri.Scheme)
-            {
-                result = Result.Failed;
-                Comment = $"Uri-scheme differs from test-run base-url. Uri scheme is {Uri.Scheme} but should be {TestRun.BaseUri.Scheme}";
-            }
+            TestResults.Add(VerifyUriScheme.Run(TestRun.BaseUri, Uri));
 
             // Find double H1 tags
-            int matches = Regex.Matches(Content, "<h1").Count;
-            if (matches > 1)
-            {
-                result = Result.Failed;
-                Comment = "The page contain several H1-tags\n";
-            }
+            TestResults.Add(VerifySingleH1Tag.Run(Content));
 
             // Find invalid links
-            var invalidUrlSegments = new List<string> { "/episerver/" };
-            foreach (var invalidSegment in invalidUrlSegments)
-            {
-                foreach (var link in Links)
-                {
-                    if (Links.ToString().ToLower().Contains(invalidSegment))
-                    {
-                        result = Result.Failed;
-                        Comment = $"The page contains links to {invalidSegment}\n";
-                    }
-                }              
-            }
+            TestResults.Add(VerifyNoInvalidLinks.Run(Links));
 
             // find invalid colors
-            var hexMatches = Regex.Matches(Content, "#([0-9a-fA-F]{3}){1,2}([, \"])");
-            foreach (Match match in hexMatches)
-            {
-                string lowerMatch = match.ToString().ToLower().Remove(match.Length - 1);
-
-                if (!TestRun.ValidColors.Contains(lowerMatch))
-                {
-                    result = Result.Failed;
-
-                    InvalidColors.Add(lowerMatch);
-
-                    if (!TestRun.InvalidColors.Contains(lowerMatch))
-                    {
-                        TestRun.InvalidColors.Add(lowerMatch);
-                    }
-                }
-            }
-            if (InvalidColors.Count > 0)
-            {
-                Comment = Comment += $"Page contains icon invalid colors\n";
-            }
+            TestResults.Add(VerifyNoInvalidColors.Run(Content, TestRun.ValidColors));
 
             // find invalid icons
-            MatchCollection iconMatches = Regex.Matches(Content, "\\s(icon-[0-9a-zA-Z-]+)");
-            foreach (Match match in iconMatches)
-            {
-                var iconMatch = match.Groups[1].Value;
-                if (!TestRun.ValidIcons.Contains(iconMatch))
-                {
-                    result = Result.Failed;
-
-                    InvalidIcons.Add(iconMatch);
-
-                    if (!TestRun.InvalidIcons.Contains(iconMatch))
-                    {
-                        TestRun.InvalidIcons.Add(iconMatch);
-                    }
-                }
-            }
-            if (InvalidIcons.Count > 0)
-            {
-                Comment = Comment += $"Page contains icon invalid icons\n";
-            }
+            TestResults.Add(VerifyNoInvalidIcons.Run(Content, TestRun.ValidIcons));
 
             // find Page ID
             MatchCollection idMatches = Regex.Matches(Content, "epi.cms.contentdata:\\/{3}(\\d+)\"");
-
             try
             {
                 ID = idMatches[0].Groups[1].Value;
@@ -306,13 +236,24 @@ namespace SiteCrawler
 
             // find page Description
             MatchCollection descriptionMatches = Regex.Matches(Content, "<meta name=\"description\" content=\"(.+)\" \\/>");
-
             try
             {
                 Description = descriptionMatches[0].Groups[1].Value;
             }
             catch (Exception)
             {
+            }
+
+            // Merge test results
+            foreach (var testResult in TestResults)
+            {
+                if (testResult.Result == Result.Failed)
+                {
+                    result = Result.Failed;
+                    break;
+                }               
+                result = Result.Passed;
+                
             }
 
             return result;

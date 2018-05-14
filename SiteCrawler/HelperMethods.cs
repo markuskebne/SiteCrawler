@@ -9,8 +9,7 @@ namespace SiteCrawler
         {
             Uri.TryCreate(link, UriKind.RelativeOrAbsolute, out var uri);
 
-            
-            if (uri.IsAbsoluteUri)
+            if (uri != null && uri.IsAbsoluteUri)
                 return uri;
             
             if (link.StartsWith("/"))

@@ -42,26 +42,24 @@ namespace SiteCrawler
             FileInfo newFile = new FileInfo(reportPath);
             ExcelPackage pck = new ExcelPackage(newFile);
             var ws = pck.Workbook.Worksheets["Tests"];
+            
 
             for (int i = 0; i < testRun.Pages.Count; i++)
             {
                 ws.Cells[i + 7, 1].Value = testRun.Pages[i].Uri;
-                ws.Cells[i + 7, 2].Value = testRun.Pages[i].TestResult;                
-                ws.Cells[i + 7, 3].Value = testRun.Pages[i].Comment;
+                ws.Cells[i + 7, 2].Value = testRun.Pages[i].TestResult;
+
+                string testResultComments = string.Empty;
+                foreach (var testResult in testRun.Pages[i].TestResults)
+                {
+                    testResultComments += testResult.Comment;
+                }
+                ws.Cells[i + 7, 3].Value = testResultComments;
+
                 ws.Cells[i + 7, 4].Value = testRun.Pages[i].ID;
                 ws.Cells[i + 7, 5].Value = testRun.Pages[i].Title;
                 ws.Cells[i + 7, 6].Value = testRun.Pages[i].Description;
-
-                foreach (var invalidColor in testRun.Pages[i].InvalidColors)
-                {
-                    ws.Cells[i + 7, 7].Value += $"{invalidColor}\n";
-                }
-
-                foreach (var invalidIcon in testRun.Pages[i].InvalidIcons)
-                {
-                    ws.Cells[i + 7, 8].Value += $"{invalidIcon}\n";
-                }
-                ws.Cells[i + 7, 10].Value = testRun.Pages[i].Source;
+                ws.Cells[i + 7, 7].Value = testRun.Pages[i].Source;
             }
 
             pck.Save();
