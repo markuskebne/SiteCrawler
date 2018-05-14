@@ -215,33 +215,23 @@ namespace SiteCrawler
 
             // find Page ID
             MatchCollection idMatches = Regex.Matches(Content, "epi.cms.contentdata:\\/{3}(\\d+)\"");
-            try
+            if (idMatches.Count > 0)
             {
                 ID = idMatches[0].Groups[1].Value;
-            }
-            catch (Exception)
-            {
             }
 
             // find page Title
             MatchCollection titleMatches = Regex.Matches(Content, "<title>(.+)<\\/title>");
-
-            try
+            if (titleMatches.Count > 0)
             {
                 Title = titleMatches[0].Groups[1].Value;
-            }
-            catch (Exception)
-            {
             }
 
             // find page Description
             MatchCollection descriptionMatches = Regex.Matches(Content, "<meta name=\"description\" content=\"(.+)\" \\/>");
-            try
+            if (descriptionMatches.Count > 0)
             {
                 Description = descriptionMatches[0].Groups[1].Value;
-            }
-            catch (Exception)
-            {
             }
 
             // Merge test results
