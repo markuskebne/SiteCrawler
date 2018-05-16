@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using SiteCrawler.TestTemplates;
+using static System.Net.WebUtility;
 
 namespace SiteCrawler
 {
@@ -104,9 +105,7 @@ namespace SiteCrawler
                     using (HttpContent content = response.Content)
                     {
                         var byteArray = content.ReadAsByteArrayAsync().Result;
-                        var result = Encoding.UTF8.GetString(byteArray, 0, byteArray.Length);
-
-                        //string result =  content.ReadAsStringAsync().Result;
+                        var result = HtmlDecode(Encoding.UTF8.GetString(byteArray, 0, byteArray.Length));
                         return result;
                     }
                 }
