@@ -2,7 +2,6 @@
 using OfficeOpenXml;
 using System;
 using System.IO;
-using OfficeOpenXml.Table.PivotTable;
 
 namespace SiteCrawler
 {
@@ -16,7 +15,7 @@ namespace SiteCrawler
 
         public ResultWriter(Stream resourceStream)
         {
-            this._resourceStream = resourceStream;
+            _resourceStream = resourceStream;
         }
 
         public bool SaveToExcel(string reportPath, TestRun testRun)
@@ -56,7 +55,7 @@ namespace SiteCrawler
                 }
                 ws.Cells[i + 7, 3].Value = testResultComments;
 
-                ws.Cells[i + 7, 4].Value = testRun.Pages[i].ID;
+                ws.Cells[i + 7, 4].Value = testRun.Pages[i].Id;
                 ws.Cells[i + 7, 5].Value = testRun.Pages[i].Title;
                 ws.Cells[i + 7, 6].Value = testRun.Pages[i].Description;
                 ws.Cells[i + 7, 7].Value = testRun.Pages[i].Source;

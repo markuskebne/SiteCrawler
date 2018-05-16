@@ -20,10 +20,10 @@ namespace SiteCrawler
         public string Content { get; set; }
         public List<Uri> Links { get; set; }
         public TestRun TestRun { get; set; }
-        public System.Net.HttpStatusCode ResponseCode { get; set; }
+        public HttpStatusCode ResponseCode { get; set; }
         public Result TestResult { get; set; }
         public string Comment { get; set; }
-        public string ID { get; set; }
+        public string Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public List<string> InvalidIcons { get; set; }
@@ -88,8 +88,11 @@ namespace SiteCrawler
         async Task<string> GetPageContentAsync()
         {
             var cookieValue = TestRun.EpiLoginCookieValue;
-            var handler = new HttpClientHandler { UseCookies = true };
-            handler.CookieContainer = new CookieContainer();
+            var handler = new HttpClientHandler
+            {
+                UseCookies = true,
+                CookieContainer = new CookieContainer()
+            };
             handler.CookieContainer.Add(Uri, new Cookie(".EPiServerLogin", $"{cookieValue}", "/", $"{TestRun.BaseUri.Host}"));
             
 
@@ -195,6 +198,9 @@ namespace SiteCrawler
         {
             Result result = Result.NotRun;
 
+            // Olika tester beroende på filtyp
+            // png js jpg
+
             // Verify ResponseCode = OK
             TestResults.Add(VerifyResponseCode.Run(ResponseCode));
 
@@ -217,7 +223,7 @@ namespace SiteCrawler
             MatchCollection idMatches = Regex.Matches(Content, "epi.cms.contentdata:\\/{3}(\\d+)\"");
             if (idMatches.Count > 0)
             {
-                ID = idMatches[0].Groups[1].Value;
+                Id = idMatches[0].Groups[1].Value;
             }
 
             // find page Title

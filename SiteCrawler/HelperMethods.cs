@@ -13,7 +13,11 @@ namespace SiteCrawler
                 return uri;
             
             if (link.StartsWith("/"))
-                Uri.TryCreate(new Uri(baseUri.GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped)), link, out uri);
+            {
+                if (baseUri != null)
+                    Uri.TryCreate(new Uri(baseUri.GetComponents(UriComponents.SchemeAndServer, UriFormat.UriEscaped)),
+                        link, out uri);
+            }
 
             else
             {
@@ -24,23 +28,20 @@ namespace SiteCrawler
 
         public static TestRun ValidateArgumentAndReturnTestRun(string[] args)
         {
-            string input;
-
             // Validate file
             if (!System.IO.File.Exists(args[0]))
             {
                 Console.WriteLine($@"Invalid argument. The given argument {args[0]} is not a valid file-path");
                 return null;
             }
-            input = System.IO.File.ReadAllText(args[0]);
+            var input = System.IO.File.ReadAllText(args[0]);
 
             StartupData startupData = JsonConvert.DeserializeObject<StartupData>(input);
             
             // Validate BaseUri
             if (!startupData.BaseUri.IsAbsoluteUri)
             {
-                Uri result;
-                Uri.TryCreate(startupData.BaseUri.OriginalString, UriKind.Absolute, out result);
+                Uri.TryCreate(startupData.BaseUri.OriginalString, UriKind.Absolute, out var result);
                 if (result == null)
                 {
                     Console.WriteLine($@"Invalid argument. The given BaseUri {startupData.BaseUri.OriginalString} could not be parsed into a valid Absolute Uri. Use format http://www.google.com");
