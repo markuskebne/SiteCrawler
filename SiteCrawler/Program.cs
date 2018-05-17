@@ -39,8 +39,8 @@ namespace SiteCrawler
 
             // write results to json
             //open file stream
-            var jsonWriter = new ResultWriter();
-            jsonWriter.SaveToJson(testRun.ResultsFolder, testRun);
+            // var jsonWriter = new ResultWriter();
+            // jsonWriter.SaveToJson(testRun.ResultsFolder, testRun);
 
             // Exit
             Console.WriteLine(@"Crawl Completed!");
