@@ -83,6 +83,7 @@
     <Compile Include="StartupData.cs" />
     <Compile Include="TestResult.cs" />
     <Compile Include="TestRun.cs" />
+    <Compile Include="TestTemplates\FindClass.cs" />
     <Compile Include="TestTemplates\VerifyNoInvalidColors.cs" />
     <Compile Include="TestTemplates\VerifyNoInvalidIcons.cs" />
     <Compile Include="TestTemplates\VerifyNoInvalidLinks.cs" />

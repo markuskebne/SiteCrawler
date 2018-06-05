@@ -239,6 +239,9 @@ namespace SiteCrawler
                 Description = descriptionMatches[0].Groups[1].Value;
             }
 
+            // Find specific class
+            //TestResults.Add(FindClass.Run(Content, "tabpanel"));
+
             // Merge test results
             foreach (var testResult in TestResults)
             {
