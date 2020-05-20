@@ -180,13 +180,14 @@ namespace SiteCrawler
             // Exclude ignored domains
             
             // Exclude ignored url segments
-            foreach (var ignoredUrlSegment in TestRun.IgnoredUrlSegments)
-            {
-                if (uri.ToString().ToLower().Contains($"/{ignoredUrlSegment}/"))
+            if (TestRun.IgnoredUrlSegments != null)
+                foreach (var ignoredUrlSegment in TestRun.IgnoredUrlSegments)
                 {
-                    return false;
+                    if (uri.ToString().ToLower().Contains($"/{ignoredUrlSegment}/"))
+                    {
+                        return false;
+                    }
                 }
-            }
 
             // .png .jpg
 

@@ -1,0 +1,9 @@
+{
+	"BaseUri" : "https://tnse.test.telenorhost.se/ ",
+	"MaximumUrlSegments" : "6",
+    "ResultsFolder" : "C:\\Temp\\crawlerresults", 
+	"EpiLoginCookieValue" : null, 
+	"IgnoredUrlSegments" : null, 
+	"ValidColors" : [ "#9ce7f5", "#ffb4b4", "b0f0b2" ], 
+	"ValidIcons" : null, 
+}

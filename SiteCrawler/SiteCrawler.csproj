@@ -95,6 +95,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
     <EmbeddedResource Include="ResultExcelTemplate.xlsx" />
+    <None Include="TestRun.json" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
